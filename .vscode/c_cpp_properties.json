@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:\\SDK\\gbz80-gb\\2-1-5\\include"
+            ]
+        }
+    ],
+    "version": 4
+}

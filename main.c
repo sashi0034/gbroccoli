@@ -88,7 +88,7 @@ void main(void)
     is_player_walking = 0;
 
     // Load sprites' tiles in video memory
-    set_sprite_data(0, PLAYER_SPRITE_TILE_COUNT, (UINT8*)TILESET_MAY);
+    set_sprite_data(0, PLAYER_SPRITE_TILE_COUNT, (UINT8 *)TILESET_MAY);
 
     // Use 8x16 sprites
     SPRITES_8x16;
@@ -96,7 +96,6 @@ void main(void)
     // Makes sprites "layer" visible
     SHOW_SPRITES;
 
-    // Init the two sprites used for the player
     move_sprite(PLAYER_SPRITE_BASE_ID + 0, player_x, player_y);
     set_sprite_prop(PLAYER_SPRITE_BASE_ID, S_PALETTE);
 
@@ -154,10 +153,10 @@ void main(void)
         else
         {
             is_player_walking = 0;
-            frame_skip = 1; // Force refresh of the animation frame
         }
 
         // Update the player position if it is walking
+
         if (is_player_walking)
         {
             if (player_direction == PLAYER_DIRECTION_RIGHT)
@@ -168,35 +167,35 @@ void main(void)
                 player_y -= 1;
             else if (player_direction == PLAYER_DIRECTION_DOWN)
                 player_y += 1;
-            move_sprite(PLAYER_SPRITE_BASE_ID + 0, player_x, player_y);
-            move_sprite(PLAYER_SPRITE_BASE_ID + 1, player_x + 8, player_y);
-            move_sprite(PLAYER_SPRITE_BASE_ID + 2, player_x + 16, player_y);
-            move_sprite(PLAYER_SPRITE_BASE_ID + 3, player_x, player_y + 16);
-            move_sprite(PLAYER_SPRITE_BASE_ID + 4, player_x + 8, player_y + 16);
-            move_sprite(PLAYER_SPRITE_BASE_ID + 5, player_x + 16, player_y + 16);
+        }
+        move_sprite(PLAYER_SPRITE_BASE_ID + 0, player_x, player_y);
+        move_sprite(PLAYER_SPRITE_BASE_ID + 1, player_x + 8, player_y);
+        move_sprite(PLAYER_SPRITE_BASE_ID + 2, player_x + 16, player_y);
+        move_sprite(PLAYER_SPRITE_BASE_ID + 3, player_x, player_y + 16);
+        move_sprite(PLAYER_SPRITE_BASE_ID + 4, player_x + 8, player_y + 16);
+        move_sprite(PLAYER_SPRITE_BASE_ID + 5, player_x + 16, player_y + 16);
 
-            // We do not update the animation on each frame: the animation
-            // will be too quick. So we skip frames
-            frame_skip -= 1;
-            if (!frame_skip)
-            {
-                frame_skip = 8;
-            }
-            else
-            {
-                continue;
-            }
+        // We do not update the animation on each frame: the animation
+        // will be too quick. So we skip frames
+        frame_skip -= 1;
+        if (!frame_skip)
+        {
+            frame_skip = 20;
         }
         else
         {
-            player_animation_frame = 0;
+            continue;
         }
-
-        if ((++player_animation_frame) >= 2)
-            player_animation_frame = 0;
 
         if (player_animation_frame == 0)
         {
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 0, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 0) & ~S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 1, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 1) & ~S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 2, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 2) & ~S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 3, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 3) & ~S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 4, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 4) & ~S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 5, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 5) & ~S_FLIPX);
+
             set_sprite_tile(PLAYER_SPRITE_BASE_ID + 0, PLAYER_SPRITE_MAP_AT(0, 0));
             set_sprite_tile(PLAYER_SPRITE_BASE_ID + 1, PLAYER_SPRITE_MAP_AT(1, 0));
             set_sprite_tile(PLAYER_SPRITE_BASE_ID + 2, PLAYER_SPRITE_MAP_AT(2, 0));
@@ -213,5 +212,33 @@ void main(void)
             set_sprite_tile(PLAYER_SPRITE_BASE_ID + 4, PLAYER_SPRITE_MAP_AT(4, 2));
             set_sprite_tile(PLAYER_SPRITE_BASE_ID + 5, PLAYER_SPRITE_MAP_AT(5, 2));
         }
+        if (player_animation_frame == 2)
+        {
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 0, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 0) | S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 1, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 1) | S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 2, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 2) | S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 3, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 3) | S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 4, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 4) | S_FLIPX);
+            set_sprite_prop(PLAYER_SPRITE_BASE_ID + 5, get_sprite_prop(PLAYER_SPRITE_BASE_ID + 5) | S_FLIPX);
+
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 0, PLAYER_SPRITE_MAP_AT(2, 0));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 1, PLAYER_SPRITE_MAP_AT(1, 0));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 2, PLAYER_SPRITE_MAP_AT(0, 0));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 3, PLAYER_SPRITE_MAP_AT(2, 2));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 4, PLAYER_SPRITE_MAP_AT(1, 2));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 5, PLAYER_SPRITE_MAP_AT(0, 2));
+        }
+        else if (player_animation_frame == 3)
+        {
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 0, PLAYER_SPRITE_MAP_AT(5, 0));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 1, PLAYER_SPRITE_MAP_AT(4, 0));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 2, PLAYER_SPRITE_MAP_AT(3, 0));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 3, PLAYER_SPRITE_MAP_AT(5, 2));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 4, PLAYER_SPRITE_MAP_AT(4, 2));
+            set_sprite_tile(PLAYER_SPRITE_BASE_ID + 5, PLAYER_SPRITE_MAP_AT(3, 2));
+        }
+
+        if ((++player_animation_frame) >= 4)
+            player_animation_frame = 0;
     }
 }

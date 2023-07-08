@@ -1,6 +1,10 @@
 @echo on
 set FILE=%1
 
+if not exist ".\%FILE%.png" (
+    exit /b 1
+)
+
 if not exist output (
     mkdir output
 ) 

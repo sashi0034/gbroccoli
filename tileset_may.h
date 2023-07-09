@@ -4,7 +4,7 @@
 #define _TILESET_MAY_H
 
 extern const UINT8 TILESET_MAY[];
-#define TILESET_MAY_TILE_COUNT 48
+#define TILESET_MAY_TILE_COUNT 60
 
 
 #endif

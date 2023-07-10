@@ -10,6 +10,9 @@
 
 #define BOOL UINT8
 
+#define SCREEN_CHIP_W (160 / 8)
+#define SCREEN_CHIP_H (144 / 8)
+
 #define TILESET_MAY_W 15
 #define TILESET_MAY_AT(x, y) (((x)*2) + ((y) / 2) * (TILESET_MAY_W * 2))
 
@@ -35,9 +38,22 @@ UINT8 player_anim_dir;
 UINT8 player_anim_frame;
 UINT8 is_player_walking;
 
-#define BG_BUFFER_W 20
-#define BG_BUFFER_H 20
-UINT8 bg_buffer[BG_BUFFER_W][BG_BUFFER_H];
+void set_bgk_tile(UBYTE x, UBYTE y, UBYTE tile)
+{
+    set_bkg_tiles(x, y, 1, 1, &tile);
+}
+
+void set_bkg_area_tile16(UBYTE x, UBYTE y, UBYTE u, UBYTE v)
+{
+    UINT8 i, j, tile;
+
+    for (i = 0; i < 2; ++i)
+        for (j = 0; j < 2; ++j)
+        {
+            tile = TILESET_AREA_AT(u + i, v + j);
+            set_bkg_tiles(x + i, y + j, 1, 1, &tile);
+        }
+}
 
 void fill_player_tiles(UINT8 base_u, BOOL is_flip)
 {
@@ -125,20 +141,19 @@ void main(void)
     set_bkg_data(0, TILESET_AREA_TILE_COUNT, (UINT8 *)TILESET_AREA);
     set_sprite_data(0, TILESET_MAY_TILE_COUNT, (UINT8 *)TILESET_MAY);
 
-    for (i = 0; i < BG_BUFFER_W; ++i)
-        for (j = 0; j < BG_BUFFER_H; ++j)
-            bg_buffer[i][j] = TILESET_AREA_AT(0, 0);
+    for (i = 0; i < SCREEN_CHIP_W; i += 2)
+        for (j = 0; j < SCREEN_CHIP_H; j += 2)
+            set_bkg_area_tile16(i, j, 0, 0);
 
-    bg_buffer[3 + 0][3 + 0] = TILESET_AREA_AT(0, 2);
-    bg_buffer[3 + 1][3 + 0] = TILESET_AREA_AT(1, 2);
-    bg_buffer[3 + 0][3 + 1] = TILESET_AREA_AT(0, 3);
-    bg_buffer[3 + 1][3 + 1] = TILESET_AREA_AT(1, 3);
+    // tree
+    for (i = 1; i < SCREEN_CHIP_W; i += 2 * 2)
+        for (j = 0; j < SCREEN_CHIP_H; j += 2 * 2)
+            set_bkg_area_tile16(i, j, 0, 2);
 
-    for (i = 0; i < BG_BUFFER_W; ++i)
-    {
-        set_bkg_tiles(i, 0, 1, BG_BUFFER_H, bg_buffer[i]);
-    }
-    // set_bkg_tiles(0, 0, TILEMAP_AREA_WIDTH, TILEMAP_AREA_HEIGHT, (UINT8 *)TILEMAP_AREA);
+    // tree
+    for (i = 3; i < SCREEN_CHIP_W - 1; i += 2 * 2)
+        for (j = 2; j < SCREEN_CHIP_H - 1; j += 2 * 2)
+            set_bkg_area_tile16(i, j, 2 + 2 * ((i + j) % 3), 0);
 
     SPRITES_8x16;
     SHOW_SPRITES;
@@ -161,14 +176,6 @@ void main(void)
 
     move_sprite(PLAYER_SPRITE_BASE + 5, player_x + 16, player_y + 16);
     set_sprite_prop(PLAYER_SPRITE_BASE + 5, S_PALETTE);
-
-    // デバッグ用
-    for (i = 0; i < 8; ++i)
-    {
-        set_sprite_prop(i + 2, S_PALETTE);
-        move_sprite(i + 2, 40 + i * 8, 40);
-        set_sprite_tile(i + 2, TILESET_MAY_AT(i, 0));
-    }
 
     while (1)
     {

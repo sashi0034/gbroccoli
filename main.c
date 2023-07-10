@@ -5,11 +5,15 @@
 #include <types.h>
 #include <gb/gb.h>
 #include "tileset_may.h"
+#include "tileset_area.h"
+#include "tilemap_area.h"
 
 #define BOOL UINT8
 
 #define TILESET_MAY_W 15
 #define TILESET_MAY_AT(x, y) (((x)*2) + ((y) / 2) * (TILESET_MAY_W * 2))
+
+#define TILESET_AREA_AT(x, y) (TILEMAP_AREA[TILEMAP_AREA_WIDTH * (y) + (x)])
 
 // Id ("nb") of the two sprites used to represent the player
 #define PLAYER_SPRITE_BASE 0
@@ -31,49 +35,9 @@ UINT8 player_anim_dir;
 UINT8 player_anim_frame;
 UINT8 is_player_walking;
 
-// Flip the given sprite on X axis.
-//
-// sprite_id: the id ("nb") of the sprite to update.
-void flip_sprite_horiz(UINT8 sprite_id)
-{
-    set_sprite_prop(sprite_id, get_sprite_prop(sprite_id) | S_FLIPX);
-}
-
-// Remove the flip the given sprite on X axis.
-//
-// sprite_id: the id ("nb") of the sprite to update.
-void unflip_sprite_horiz(UINT8 sprite_id)
-{
-    set_sprite_prop(sprite_id, get_sprite_prop(sprite_id) & ~S_FLIPX);
-}
-
-// Update the tiles of the sprite to animate it.
-//
-// sprite_id: the id ("nb") of the sprite to update
-// anim:      pointer to the animation data
-// direction: direction of the animation (= offset of the animation in the global animation data)
-// frame:     the new frame of the animation that will be displayed
-//
-// Returns the next frame of the animation.
-UINT8 update_sprite_animation(UINT8 sprite_id, UINT8 *anim, UINT8 direction, UINT8 frame)
-{
-    UINT8 len = anim[direction];
-    UINT8 flip = anim[direction + 1];
-    UINT8 tile_id = anim[direction + 2 + frame];
-
-    if (flip)
-    {
-        flip_sprite_horiz(sprite_id);
-    }
-    else
-    {
-        unflip_sprite_horiz(sprite_id);
-    }
-
-    set_sprite_tile(sprite_id, tile_id);
-
-    return (frame + 1) % len;
-}
+#define BG_BUFFER_W 20
+#define BG_BUFFER_H 20
+UINT8 bg_buffer[BG_BUFFER_W][BG_BUFFER_H];
 
 void fill_player_tiles(UINT8 base_u, BOOL is_flip)
 {
@@ -142,13 +106,9 @@ void anim_player_horizontal(UINT8 frame, BOOL is_left)
     }
 }
 
-void anim_player_right(UINT8 frame)
-{
-}
-
 void main(void)
 {
-    UINT8 i = 0;
+    UINT8 i, j;
     UINT8 keys = 0;
     UINT8 frame_skip = 8; // Update player's animation every 8 frame to
                           // slow down the animation (8 frames = ~133 ms
@@ -161,14 +121,28 @@ void main(void)
     player_anim_frame = 0;
     is_player_walking = 0;
 
-    // Load sprites' tiles in video memory
+    // Load tiles in video memory
+    set_bkg_data(0, TILESET_AREA_TILE_COUNT, (UINT8 *)TILESET_AREA);
     set_sprite_data(0, TILESET_MAY_TILE_COUNT, (UINT8 *)TILESET_MAY);
 
-    // Use 8x16 sprites
-    SPRITES_8x16;
+    for (i = 0; i < BG_BUFFER_W; ++i)
+        for (j = 0; j < BG_BUFFER_H; ++j)
+            bg_buffer[i][j] = TILESET_AREA_AT(0, 0);
 
-    // Makes sprites "layer" visible
+    bg_buffer[3 + 0][3 + 0] = TILESET_AREA_AT(0, 2);
+    bg_buffer[3 + 1][3 + 0] = TILESET_AREA_AT(1, 2);
+    bg_buffer[3 + 0][3 + 1] = TILESET_AREA_AT(0, 3);
+    bg_buffer[3 + 1][3 + 1] = TILESET_AREA_AT(1, 3);
+
+    for (i = 0; i < BG_BUFFER_W; ++i)
+    {
+        set_bkg_tiles(i, 0, 1, BG_BUFFER_H, bg_buffer[i]);
+    }
+    // set_bkg_tiles(0, 0, TILEMAP_AREA_WIDTH, TILEMAP_AREA_HEIGHT, (UINT8 *)TILEMAP_AREA);
+
+    SPRITES_8x16;
     SHOW_SPRITES;
+    SHOW_BKG;
 
     move_sprite(PLAYER_SPRITE_BASE + 0, player_x, player_y);
     set_sprite_prop(PLAYER_SPRITE_BASE, S_PALETTE);

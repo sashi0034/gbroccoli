@@ -30,6 +30,8 @@ enum Direction4
     DIR_RIGHT
 };
 
+#define TO_PALETTE(c0, c1, c2, c3) c0 | c1 << 2 | c2 << 4 | c3 << 6
+
 // Variables containing player state
 UINT8 player_x;
 UINT8 player_y;
@@ -159,23 +161,8 @@ void main(void)
     SHOW_SPRITES;
     SHOW_BKG;
 
-    move_sprite(PLAYER_SPRITE_BASE + 0, player_x, player_y);
-    set_sprite_prop(PLAYER_SPRITE_BASE, S_PALETTE);
-
-    move_sprite(PLAYER_SPRITE_BASE + 1, player_x + 8, player_y);
-    set_sprite_prop(PLAYER_SPRITE_BASE + 1, S_PALETTE);
-
-    move_sprite(PLAYER_SPRITE_BASE + 2, player_x + 16, player_y);
-    set_sprite_prop(PLAYER_SPRITE_BASE + 2, S_PALETTE);
-
-    move_sprite(PLAYER_SPRITE_BASE + 3, player_x, player_y + 16);
-    set_sprite_prop(PLAYER_SPRITE_BASE + 3, S_PALETTE);
-
-    move_sprite(PLAYER_SPRITE_BASE + 4, player_x + 8, player_y + 16);
-    set_sprite_prop(PLAYER_SPRITE_BASE + 4, S_PALETTE);
-
-    move_sprite(PLAYER_SPRITE_BASE + 5, player_x + 16, player_y + 16);
-    set_sprite_prop(PLAYER_SPRITE_BASE + 5, S_PALETTE);
+    OBP0_REG = TO_PALETTE(0, 3, 2, 1);
+    OBP1_REG = TO_PALETTE(0, 3, 2, 0);
 
     while (1)
     {

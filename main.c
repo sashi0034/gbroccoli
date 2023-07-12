@@ -7,6 +7,7 @@
 #include "tileset_may.h"
 #include "tileset_area.h"
 #include "tilemap_area.h"
+#include "tileset_infos.h"
 
 #define BOOL UINT8
 
@@ -17,6 +18,12 @@
 #define TILESET_MAY_AT(x, y) (((x)*2) + ((y) / 2) * (TILESET_MAY_W * 2))
 
 #define TILESET_AREA_AT(x, y) (TILEMAP_AREA[TILEMAP_AREA_WIDTH * (y) + (x)])
+
+#define TILESET_INFOS_TILE_BASE TILESET_AREA_TILE_COUNT
+#define TILESET_INFOS_W 10
+#define TILESET_INFOS_AT(x, y) (TILESET_INFOS_TILE_BASE + (x) + ((y)*TILESET_INFOS_W))
+
+#define AREA_PADDING_Y 2
 
 // Id ("nb") of the two sprites used to represent the player
 #define PLAYER_SPRITE_BASE 0
@@ -55,6 +62,11 @@ void set_bkg_area_tile16(UBYTE x, UBYTE y, UBYTE u, UBYTE v)
             tile = TILESET_AREA_AT(u + i, v + j);
             set_bkg_tiles(x + i, y + j, 1, 1, &tile);
         }
+}
+
+void set_win_tile(UBYTE x, UBYTE y, UBYTE tile)
+{
+    set_win_tiles(x, y, 1, 1, &tile);
 }
 
 void fill_player_tiles(UINT8 base_u, BOOL is_flip)
@@ -140,26 +152,51 @@ void main(void)
     is_player_walking = 0;
 
     // Load tiles in video memory
-    set_bkg_data(0, TILESET_AREA_TILE_COUNT, (UINT8 *)TILESET_AREA);
     set_sprite_data(0, TILESET_MAY_TILE_COUNT, (UINT8 *)TILESET_MAY);
+    set_bkg_data(0, TILESET_AREA_TILE_COUNT, (UINT8 *)TILESET_AREA);
+    set_win_data(TILESET_INFOS_TILE_BASE, TILESET_INFOS_TILE_COUNT, (UINT8 *)TILESET_INFOS);
 
     for (i = 0; i < SCREEN_CHIP_W; i += 2)
         for (j = 0; j < SCREEN_CHIP_H; j += 2)
             set_bkg_area_tile16(i, j, 0, 0);
 
-    // tree
+    // 木
     for (i = 1; i < SCREEN_CHIP_W; i += 2 * 2)
         for (j = 0; j < SCREEN_CHIP_H; j += 2 * 2)
             set_bkg_area_tile16(i, j, 0, 2);
 
-    // tree
+    // 雑草など
     for (i = 3; i < SCREEN_CHIP_W - 1; i += 2 * 2)
         for (j = 2; j < SCREEN_CHIP_H - 1; j += 2 * 2)
             set_bkg_area_tile16(i, j, 2 + 2 * ((i + j) % 3), 0);
 
+    for (i = 0; i < SCREEN_CHIP_W; ++i)
+        for (j = 0; j < 2; ++j)
+            set_win_tile(i, j, TILESET_INFOS_AT(0, 1));
+
+    // テキスト
+    set_win_tile(1, 0, TILESET_INFOS_AT(1, 1)); // す
+    set_win_tile(2, 0, TILESET_INFOS_AT(2, 1)); // こ
+    set_win_tile(3, 0, TILESET_INFOS_AT(3, 1)); // あ
+    set_win_tile(4, 0, TILESET_INFOS_AT(4, 1)); // →
+    set_win_tile(5, 0, TILESET_INFOS_AT(0, 0));
+    set_win_tile(6, 0, TILESET_INFOS_AT(5, 1)); // て
+    set_win_tile(7, 0, TILESET_INFOS_AT(6, 1)); // ん
+
+    set_win_tile(14, 0, TILESET_INFOS_AT(7, 1)); // れ
+    set_win_tile(15, 0, TILESET_INFOS_AT(8, 1)); // べ
+    set_win_tile(16, 0, TILESET_INFOS_AT(9, 1)); // る
+    set_win_tile(17, 0, TILESET_INFOS_AT(4, 1)); // →
+    set_win_tile(18, 0, TILESET_INFOS_AT(1, 0));
+
+    // ちょっとだけBGを上にずらす
+    scroll_bkg(0, AREA_PADDING_Y);
+    move_win(7, 136 - AREA_PADDING_Y);
+
     SPRITES_8x16;
     SHOW_SPRITES;
     SHOW_BKG;
+    SHOW_WIN;
 
     OBP0_REG = TO_PALETTE(0, 3, 2, 1);
     OBP1_REG = TO_PALETTE(0, 3, 2, 0);

@@ -171,7 +171,7 @@ void update_player(Player *player) {
     // アニメーション
     if (player->anim_timer == 0) {
         player->anim_timer = 15;
-        player->anim_frame = (player->anim_frame + 1) % 4;
+        player->anim_frame = MOD_P2((player->anim_frame + 1), 4);
 
         if (player->dir_cache == DIR_DOWN) {
             anim_player_down(player->anim_frame);

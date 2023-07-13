@@ -79,10 +79,11 @@ BOOL move_movable(MovableTrait *movable) {
 #define BOX16_16 16
 
 BOOL can_box16_pass_area(INT8 x, INT8 y) {
-    if (((x + 8) / BOX16_16) % 2 == 0 &&
-        ((x + 8 + BOX16_16 - 1) / BOX16_16) % 2 == 0)
+    if (MOD_P2(DIV_P2((x + 8), BOX16_16), 2) == 0 &&
+        (MOD_P2(DIV_P2(x + 8 + BOX16_16 - 1, BOX16_16), 2) == 0))
         return TRUE;
-    if ((y / BOX16_16) % 2 != 0 && ((y + BOX16_16 - 1) / BOX16_16) % 2 != 0)
+    if (MOD_P2(DIV_P2(y, BOX16_16), 2) != 0 &&
+        MOD_P2(DIV_P2(y + BOX16_16 - 1, BOX16_16), 2) != 0)
         return TRUE;
     return FALSE;
 }

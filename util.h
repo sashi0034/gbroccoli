@@ -19,4 +19,19 @@ void set_win_tile(UBYTE x, UBYTE y, UBYTE tile) {
     set_win_tiles(x, y, 1, 1, &tile);
 }
 
+#define EXP_P2(x)                                                              \
+    (((x) == 1)     ? 0                                                        \
+     : ((x) == 2)   ? 1                                                        \
+     : ((x) == 4)   ? 2                                                        \
+     : ((x) == 8)   ? 3                                                        \
+     : ((x) == 16)  ? 4                                                        \
+     : ((x) == 32)  ? 5                                                        \
+     : ((x) == 64)  ? 6                                                        \
+     : ((x) == 128) ? 7                                                        \
+                    : 0)
+
+#define MUL_P2(x, pow2) ((x) << (EXP_P2((pow2))))
+#define DIV_P2(x, pow2) ((x) >> (EXP_P2((pow2))))
+#define MOD_P2(x, pow2) ((x) & (EXP_P2((pow2))))
+
 #endif // UTIL_H

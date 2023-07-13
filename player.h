@@ -66,8 +66,8 @@ void anim_player_horizontal(UINT8 frame, BOOL is_left) {
 }
 
 void locate_player(UINT8 player_x, UINT8 player_y) {
-    player_x = player_x - 4;
-    player_y = player_y - 16 - AREA_PADDING_Y;
+    player_x = player_x + SPR_GAP_X - 4;
+    player_y = player_y + SPR_GAP_Y - 16 - AREA_PADDING_Y;
 
     move_sprite(PLAYER_SPR_BASE + 0, player_x, player_y);
     move_sprite(PLAYER_SPR_BASE + 1, player_x + 8, player_y);
@@ -92,41 +92,76 @@ void reset_player(Player *player) {
     player->anim_frame = 0;
 
     reset_movable(&player->movable, 1, 0);
-    player->movable.x = 64;
-    player->movable.y = 64;
+    player->movable.x = 56;
+    player->movable.y = 48;
 
     locate_player(player->movable.x, player->movable.y);
     anim_player_down(0);
 }
 
-void update_player(Player *player) {
-    UINT8 x, y, joyp;
+#define PLAYER_STRIDE_8 8
+
+void input_player_dir(Player *player) {
+    UINT8 joyp;
+    INT8 next_dir, next_x, next_y;
+
+    if (is_movable_active(&(player->movable)) == FALSE)
+        return;
+
     joyp = joypad();
-    if (is_movable_active(&(player->movable))) {
-        if (joyp & J_UP) {
-            if (player->dir_cache != player->dir_cache_horizontal)
-                player->anim_timer = 0;
-            player->dir_cache = player->dir_cache_horizontal;
-            player->movable.dy = -8;
-        } else if (joyp & J_DOWN) {
-            if (player->dir_cache != DIR_DOWN)
-                player->anim_timer = 0;
-            player->dir_cache = DIR_DOWN;
-            player->movable.dy = 8;
-        } else if (joyp & J_LEFT) {
-            if (player->dir_cache != DIR_LEFT)
-                player->anim_timer = 0;
-            player->dir_cache = DIR_LEFT;
-            player->dir_cache_horizontal = DIR_LEFT;
-            player->movable.dx = -8;
-        } else if (joyp & J_RIGHT) {
-            if (player->dir_cache != DIR_RIGHT)
-                player->anim_timer = 0;
-            player->dir_cache = DIR_RIGHT;
-            player->dir_cache_horizontal = DIR_RIGHT;
-            player->movable.dx = 8;
-        }
+
+    // ジョイパッド入力
+    next_dir = -1;
+    if (joyp & J_UP) {
+        next_dir = DIR_UP;
+    } else if (joyp & J_DOWN) {
+        next_dir = DIR_DOWN;
+    } else if (joyp & J_LEFT) {
+        next_dir = DIR_LEFT;
+    } else if (joyp & J_RIGHT) {
+        next_dir = DIR_RIGHT;
     }
+
+    if (next_dir == -1)
+        return;
+
+    next_x = player->movable.x;
+    next_y = player->movable.y;
+    proceed_dir(&next_x, &next_y, next_dir, PLAYER_STRIDE_8);
+
+    if (can_box16_pass_area(next_x, next_y) == FALSE) {
+        return;
+    }
+
+    // 移動方向決定
+    if (next_dir == DIR_UP) {
+        if (player->dir_cache != player->dir_cache_horizontal)
+            player->anim_timer = 0;
+        player->dir_cache = player->dir_cache_horizontal;
+        player->movable.dy = -PLAYER_STRIDE_8;
+    } else if (next_dir == DIR_DOWN) {
+        if (player->dir_cache != DIR_DOWN)
+            player->anim_timer = 0;
+        player->dir_cache = DIR_DOWN;
+        player->movable.dy = PLAYER_STRIDE_8;
+    } else if (next_dir == DIR_LEFT) {
+        if (player->dir_cache != DIR_LEFT)
+            player->anim_timer = 0;
+        player->dir_cache = DIR_LEFT;
+        player->dir_cache_horizontal = DIR_LEFT;
+        player->movable.dx = -PLAYER_STRIDE_8;
+    } else if (next_dir == DIR_RIGHT) {
+        if (player->dir_cache != DIR_RIGHT)
+            player->anim_timer = 0;
+        player->dir_cache = DIR_RIGHT;
+        player->dir_cache_horizontal = DIR_RIGHT;
+        player->movable.dx = PLAYER_STRIDE_8;
+    }
+}
+
+void update_player(Player *player) {
+    // 入力
+    input_player_dir(player);
 
     // 移動
     if (move_movable(&player->movable)) {

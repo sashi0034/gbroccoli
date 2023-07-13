@@ -76,4 +76,34 @@ BOOL move_movable(MovableTrait *movable) {
     }
 }
 
+#define BOX16_16 16
+
+BOOL can_box16_pass_area(INT8 x, INT8 y) {
+    if (((x + 8) / BOX16_16) % 2 == 0 &&
+        ((x + 8 + BOX16_16 - 1) / BOX16_16) % 2 == 0)
+        return TRUE;
+    if ((y / BOX16_16) % 2 != 0 && ((y + BOX16_16 - 1) / BOX16_16) % 2 != 0)
+        return TRUE;
+    return FALSE;
+}
+
+void proceed_dir(INT8 *x, INT8 *y, UINT8 dir, INT8 step) {
+    switch (dir) {
+    case DIR_LEFT:
+        *x -= step;
+        break;
+    case DIR_RIGHT:
+        *x += step;
+        break;
+    case DIR_UP:
+        *y -= step;
+        break;
+    case DIR_DOWN:
+        *y += step;
+        break;
+    default:
+        break;
+    }
+}
+
 #endif // PLAYING_H

@@ -27,6 +27,11 @@ void set_bkg_area_tile16(UBYTE x, UBYTE y, UBYTE u, UBYTE v) {
         }
 }
 
+void interrupt_lcd() {
+    // Window以下はスプライトを非表示にする
+    HIDE_SPRITES;
+}
+
 void main(void) {
     UINT8 i, j;
 
@@ -84,9 +89,16 @@ void main(void) {
     OBP0_REG = TO_PALETTE(0, 3, 2, 1);
     OBP1_REG = TO_PALETTE(0, 3, 2, 0);
 
+    // LY=LYC割り込みの設定
+    STAT_REG = STAT_LY_EQ_LYC;
+    LYC_REG = 136 - AREA_PADDING_Y;
+    set_interrupts(VBL_IFLAG | LCD_IFLAG);
+    add_LCD(interrupt_lcd);
+
     while (1) {
         // Wait for v-blank (screen refresh)
         wait_vbl_done();
+        SHOW_SPRITES;
 
         update_player(&g_player);
     }

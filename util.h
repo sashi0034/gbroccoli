@@ -6,6 +6,8 @@
 #define SCREEN_CHIP_W (160 / 8)
 #define SCREEN_CHIP_H (144 / 8)
 
+#define STAT_LY_EQ_LYC 0x40
+
 #define SPR_GAP_X (8)
 #define SPR_GAP_Y (16)
 

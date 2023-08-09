@@ -105,7 +105,7 @@ void input_player_dir(Player *player) {
     UINT8 joyp;
     INT8 next_dir, next_x, next_y;
 
-    if (is_movable_active(&(player->movable)) == FALSE)
+    if (is_movable_stopped(&(player->movable)) == FALSE)
         return;
 
     joyp = joypad();

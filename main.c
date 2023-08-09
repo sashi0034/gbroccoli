@@ -5,8 +5,7 @@
 #include <gb/gb.h>
 #include <types.h>
 
-#include "player.h"
-#include "playing.h"
+#include "playing_scene.h"
 #include "tilemap_area.h"
 #include "tileset_area.h"
 #include "tileset_infos.h"
@@ -14,8 +13,7 @@
 
 #define TO_PALETTE(c0, c1, c2, c3) c0 | c1 << 2 | c2 << 4 | c3 << 6
 
-// Variables global state
-Player g_player;
+PlayingScene g_playing;
 
 void set_bkg_area_tile16(UBYTE x, UBYTE y, UBYTE u, UBYTE v) {
     UINT8 i, j, tile;
@@ -36,10 +34,13 @@ void main(void) {
     UINT8 i, j;
 
     // Initialize player's state
-    reset_player(&g_player);
+    reset_playing_scene(&g_playing);
 
     // Load tiles in video memory
-    set_sprite_data(0, TILESET_MAY_TILE_COUNT, (UINT8 *)TILESET_MAY);
+    set_sprite_data(TILESET_MAY_BEGIN, TILESET_MAY_TILE_COUNT,
+                    (UINT8 *)TILESET_MAY);
+    set_sprite_data(TILESET_CRIB_BEGIN, TILESET_CRIB_TILE_COUNT,
+                    (UINT8 *)TILESET_CRIB);
     set_bkg_data(0, TILESET_AREA_TILE_COUNT, (UINT8 *)TILESET_AREA);
     set_win_data(TILESET_INFOS_TILE_BASE, TILESET_INFOS_TILE_COUNT,
                  (UINT8 *)TILESET_INFOS);
@@ -100,6 +101,6 @@ void main(void) {
         wait_vbl_done();
         SHOW_SPRITES;
 
-        update_player(&g_player);
+        update_playing_scene(&g_playing);
     }
 }

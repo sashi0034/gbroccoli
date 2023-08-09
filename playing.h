@@ -4,11 +4,19 @@
 #include <gb/gb.h>
 #include <types.h>
 
+#include "tileset_may.h"
 #include "types.h"
 #include "util.h"
 
+#define TILESET_MAY_BEGIN 0
 #define TILESET_MAY_W 15
-#define TILESET_MAY_AT(x, y) (((x)*2) + ((y) / 2) * (TILESET_MAY_W * 2))
+#define TILESET_MAY_AT(x, y)                                                   \
+    (TILESET_MAY_BEGIN + ((x)*2) + ((y) / 2) * (TILESET_MAY_W * 2))
+
+#define TILESET_CRIB_BEGIN TILESET_MAY_TILE_COUNT
+#define TILESET_CRIB_W 4
+#define TILESET_CRIB_AT(x, y)                                                  \
+    (TILESET_CRIB_BEGIN + ((x)*2) + ((y) / 2) * (TILESET_CRIB_W * 2))
 
 #define TILESET_AREA_AT(x, y) (TILEMAP_AREA[TILEMAP_AREA_WIDTH * (y) + (x)])
 
@@ -21,6 +29,12 @@
 
 #define PLAYER_SPR_BASE 0
 #define PLAYER_SPR_SIZE 6
+#define PLAYER_SPR_END (PLAYER_SPR_SIZE - 1)
+
+#define ENEMY_SPR_BASE (PLAYER_SPR_END + 1)
+#define ENEMY_SPR_SIZE 2
+#define ENEMY_SPR_COUNT_4 4
+#define ENEMY_SPR_END (ENEMY_SPR_BASE + ENEMY_SPR_SIZE * ENEMY_SPR_COUNT_4 - 1)
 
 typedef struct {
     INT8 x;
@@ -32,7 +46,7 @@ typedef struct {
     UINT8 move_timer_max;
 } MovableTrait;
 
-BOOL is_movable_active(MovableTrait *movable) {
+BOOL is_movable_stopped(MovableTrait *movable) {
     return movable->dx == 0 && movable->dy == 0;
 }
 

@@ -2,7 +2,7 @@
 
 REM Compile Target C Files
 set PROJECT=gbroccoli
-set SOURCES=main.c tileset_may.c tileset_area.c tilemap_area.c tileset_infos.c
+set SOURCES=main.c tileset_may.c tileset_area.c tilemap_area.c tileset_infos.c tileset_crib.c
 
 REM Generate Object Files
 for %%i in (%SOURCES%) do (

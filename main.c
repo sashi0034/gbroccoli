@@ -5,11 +5,12 @@
 #include <gb/gb.h>
 #include <types.h>
 
-#include "playing_scene.h"
+#include "playing.h"
 #include "tilemap_area.h"
 #include "tileset_area.h"
 #include "tileset_infos.h"
 #include "tileset_may.h"
+#include "tileset_crib.h"
 
 #define TO_PALETTE(c0, c1, c2, c3) c0 | c1 << 2 | c2 << 4 | c3 << 6
 

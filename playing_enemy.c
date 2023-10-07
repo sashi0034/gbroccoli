@@ -1,19 +1,5 @@
-
 #include "playing.h"
 #include "tileset_crib.h"
-
-typedef struct {
-    BOOL is_using;
-    UINT8 spr_base;
-    UINT8 anim_timer;
-    UINT8 anim_frame;
-    MovableTrait movable;
-} Enemy;
-
-typedef struct {
-    UINT8 timer;
-    Enemy enemies[ENEMY_SPR_COUNT_4];
-} EnemyManager;
 
 void fill_enemy_tiles(UINT8 base_spr, UINT8 base_u, BOOL is_flip) {
     if (is_flip) {

@@ -8,9 +8,9 @@
 #include "playing.h"
 #include "tilemap_area.h"
 #include "tileset_area.h"
+#include "tileset_crib.h"
 #include "tileset_infos.h"
 #include "tileset_may.h"
-#include "tileset_crib.h"
 
 #define TO_PALETTE(c0, c1, c2, c3) c0 | c1 << 2 | c2 << 4 | c3 << 6
 
@@ -33,6 +33,8 @@ void interrupt_lcd() {
 
 void main(void) {
     UINT8 i, j;
+
+    init_rand(1);
 
     // Initialize player's state
     reset_playing_scene(&g_playing);

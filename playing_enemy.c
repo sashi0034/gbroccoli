@@ -42,7 +42,7 @@ void pop_enemy(Enemy *enemy) {
 
     reset_movable(&enemy->movable, 1, 2);
     enemy->movable.x = -16;
-    enemy->movable.y = 64;
+    enemy->movable.y = 32 + MUL_P2(get_rand() & 3, 32);
     enemy->movable.dx = 96;
 
     locate_enemy(enemy->spr_base, enemy->movable.x, enemy->movable.y);

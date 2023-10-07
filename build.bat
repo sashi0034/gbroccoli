@@ -3,6 +3,7 @@
 REM Compile Target C Files
 set PROJECT=gbroccoli
 set SOURCES=main.c ^
+    util.c ^
     playing.c ^
     playing_player.c ^
     playing_enemy.c ^

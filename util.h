@@ -35,6 +35,9 @@ static void set_win_tile(UBYTE x, UBYTE y, unsigned char tile) {
      : ((pow2) == 128) ? 7                                                     \
                        : 0)
 
+void init_rand(UINT8 seed);
+UINT8 get_rand(void);
+
 #define MUL_P2(x, pow2) ((x) << (EXP_P2((pow2))))
 #define DIV_P2(x, pow2) ((x) >> (EXP_P2((pow2))))
 #define MOD_P2(x, pow2) ((x) & (2 * EXP_P2((pow2)) - 1))

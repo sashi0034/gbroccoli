@@ -1,6 +1,21 @@
 #include "playing.h"
 #include "tileset_crib.h"
 
+typedef struct {
+    BOOL is_using;
+    UINT8 spr_base;
+    UINT8 anim_timer;
+    UINT8 anim_frame;
+    MovableTrait movable;
+} Enemy;
+
+typedef struct {
+    UINT8 timer;
+    Enemy enemies[ENEMY_SPR_COUNT_4];
+} EnemyManager;
+
+EnemyManager s_enemy_manager;
+
 void fill_enemy_tiles(UINT8 base_spr, UINT8 base_u, BOOL is_flip) {
     if (is_flip) {
         set_sprite_prop(base_spr + 0, S_PALETTE | S_FLIPX);
@@ -49,7 +64,8 @@ void pop_enemy(Enemy *enemy) {
     fill_enemy_tiles(enemy->spr_base, 0, FALSE);
 }
 
-void reset_enemy_manager(EnemyManager *manager) {
+void reset_enemy_manager() {
+    EnemyManager *manager = &s_enemy_manager;
     UINT8 i;
     for (i = 0; i < ENEMY_SPR_COUNT_4; ++i) {
         manager->enemies[i].is_using = FALSE;
@@ -57,7 +73,8 @@ void reset_enemy_manager(EnemyManager *manager) {
     }
 }
 
-void update_enemy_manger(EnemyManager *manager) {
+void update_enemy_manger() {
+    EnemyManager *manager = &s_enemy_manager;
     UINT8 i;
     manager->timer++;
 

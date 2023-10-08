@@ -14,8 +14,6 @@
 
 #define TO_PALETTE(c0, c1, c2, c3) c0 | c1 << 2 | c2 << 4 | c3 << 6
 
-PlayingScene g_playing;
-
 void set_bkg_area_tile16(UBYTE x, UBYTE y, UBYTE u, UBYTE v) {
     UINT8 i, j, tile;
 
@@ -37,7 +35,7 @@ void main(void) {
     init_rand(1);
 
     // Initialize player's state
-    reset_playing_scene(&g_playing);
+    reset_playing_scene();
 
     // Load tiles in video memory
     set_sprite_data(TILESET_MAY_BEGIN, TILESET_MAY_TILE_COUNT,
@@ -104,6 +102,6 @@ void main(void) {
         wait_vbl_done();
         SHOW_SPRITES;
 
-        update_playing_scene(&g_playing);
+        update_playing_scene();
     }
 }

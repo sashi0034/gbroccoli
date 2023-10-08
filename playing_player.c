@@ -1,5 +1,15 @@
 #include "playing.h"
 
+typedef struct {
+    UINT8 dir_cache;
+    UINT8 dir_cache_horizontal;
+    UINT8 anim_timer;
+    UINT8 anim_frame;
+    MovableTrait movable;
+} Player;
+
+Player s_player;
+
 void fill_player_tiles(UINT8 base_u, BOOL is_flip) {
     UINT8 i, flag;
 
@@ -74,7 +84,9 @@ void locate_player(UINT8 player_x, UINT8 player_y) {
     move_sprite(PLAYER_SPR_BASE + 5, player_x + 16, player_y + 16);
 }
 
-void reset_player(Player *player) {
+void reset_player() {
+    Player *player = &s_player;
+
     player->dir_cache = DIR_DOWN;
     player->dir_cache_horizontal = DIR_LEFT;
     player->anim_timer = 0;
@@ -148,7 +160,9 @@ void input_player_dir(Player *player) {
     }
 }
 
-void update_player(Player *player) {
+void update_player() {
+    Player *player = &s_player;
+
     // 入力
     input_player_dir(player);
 

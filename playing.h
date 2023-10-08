@@ -53,47 +53,22 @@ BOOL move_movable(MovableTrait *movable);
 BOOL can_box16_pass_area(INT8 x, INT8 y);
 void proceed_dir(INT8 *x, INT8 *y, UINT8 dir, INT8 step);
 
-typedef struct {
-    UINT8 dir_cache;
-    UINT8 dir_cache_horizontal;
-    UINT8 anim_timer;
-    UINT8 anim_frame;
-    MovableTrait movable;
-} Player;
-
-typedef struct {
-    BOOL is_using;
-    UINT8 spr_base;
-    UINT8 anim_timer;
-    UINT8 anim_frame;
-    MovableTrait movable;
-} Enemy;
-typedef struct {
-    UINT8 timer;
-    Enemy enemies[ENEMY_SPR_COUNT_4];
-} EnemyManager;
-
-typedef struct {
-    Player player;
-    EnemyManager enemy_manager;
-} PlayingScene;
-
 // Reset functions
-void reset_player(Player *player);
-void reset_enemy_manager(EnemyManager *manager);
+void reset_player();
+void reset_enemy_manager();
 
 // Update functions
-void update_player(Player *player);
-void update_enemy_manger(EnemyManager *manager);
+void update_player();
+void update_enemy_manger();
 
-static void reset_playing_scene(PlayingScene *scene) {
-    reset_player(&scene->player);
-    reset_enemy_manager(&scene->enemy_manager);
+static void reset_playing_scene() {
+    reset_player();
+    reset_enemy_manager();
 }
 
-static void update_playing_scene(PlayingScene *scene) {
-    update_player(&scene->player);
-    update_enemy_manger(&scene->enemy_manager);
+static void update_playing_scene() {
+    update_player();
+    update_enemy_manger();
 }
 
 #endif // PLAYING_H

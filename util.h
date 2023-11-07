@@ -6,6 +6,9 @@
 
 #define BOOL UINT8
 
+#define SCW_160 160
+#define SCH_144 144
+
 #define SCREEN_CHIP_W (160 / 8)
 #define SCREEN_CHIP_H (144 / 8)
 

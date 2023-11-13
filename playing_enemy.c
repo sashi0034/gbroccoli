@@ -87,14 +87,14 @@ static void pop_enemy(Enemy *enemy) {
     enemy->dir = dir;
     switch (dir) {
     case DIR_UP:
-        enemy->remaining_move = 3;
-        enemy->movable.x = 32 + MUL_P2(get_rand() & 3, 32);
+        enemy->remaining_move = 6;
+        enemy->movable.x = 24 + MUL_P2(get_rand() & 3, 32);
         enemy->movable.y = SCH_144;
         break;
     case DIR_DOWN:
-        enemy->remaining_move = 3;
-        enemy->movable.x = 32 + MUL_P2(get_rand() & 3, 32);
-        enemy->movable.y = -8;
+        enemy->remaining_move = 6;
+        enemy->movable.x = 24 + MUL_P2(get_rand() & 3, 32);
+        enemy->movable.y = 0;
         break;
     case DIR_RIGHT:
         enemy->remaining_move = 7;

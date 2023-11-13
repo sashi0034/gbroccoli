@@ -75,6 +75,13 @@ void update_enemy(Enemy *enemy) {
             enemy->is_using = FALSE;
         }
     }
+
+    enemy->anim_timer++;
+    if ((enemy->anim_timer & 15) == 0) {
+        enemy->anim_frame = (enemy->anim_frame + 1) & 3;
+        fill_enemy_tiles(enemy->spr_base, MUL_P2(enemy->anim_frame >> 1, 2),
+                         enemy->anim_frame & 1);
+    }
 }
 
 static void pop_enemy(Enemy *enemy) {
@@ -89,7 +96,7 @@ static void pop_enemy(Enemy *enemy) {
     case DIR_UP:
         enemy->remaining_move = 6;
         enemy->movable.x = 24 + MUL_P2(get_rand() & 3, 32);
-        enemy->movable.y = SCH_144;
+        enemy->movable.y = SCH_144 + 8;
         break;
     case DIR_DOWN:
         enemy->remaining_move = 6;
